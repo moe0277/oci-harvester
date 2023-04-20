@@ -14,7 +14,7 @@ The high level pattern for installing Harvester on OCI is:
 2. Deploy a small (Oracle Linux) server w/ 1 OCPU and 4 GB RAM, default disk size. 
   a. install oci-cli, apache, mysql, and php on this server because it will be hosting Harvester files. 
   b. ensure apache can execute php scripts. 
-  c. deploy the files in the apache/ folder to /var/www/html.  
+  c. deploy the files in the web/ folder to for example /var/www/html (for apache on rpm-based linux systems).  
   d. modify the boot.php script to ensure the path and ips are correct in the boot() and install() functions. 
   e. you can also modify boot.php for the install() section to include an automated install yaml file. 
   f. modify the launch.sh script to update the variables for cloud resources (compartment, subnet, image, ssh key, etc). 
