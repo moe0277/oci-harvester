@@ -15,52 +15,48 @@ The high level pattern for installing Harvester on OCI is:
   
   b. For eg if the subnet cidr is 10.0.10.0/24 - configure the security list to allow all traffic/ports for 10.0.10.0/24. 
   
-### 2. Deploy a small (Oracle Linux) server w/ 1 OCPU and 4 GB RAM, default disk size. 
+### 2. Deploy a small (Oracle Linux) compute instance w/ 1 OCPU and 4 GB RAM, default disk size on the same subnet where Harvester instances will be launched. 
 
-  a. install oci-cli, apache, mysql, and php on this server because it will be hosting Harvester files. 
+  a. Install oci-cli, apache, mysql, and php on this server because it will be hosting Harvester files. 
   
-  b. ensure apache can execute php scripts. 
+  b. Deploy the `boot.php` script file from the `web/` folder to `/var/www/html/harvester/` (for apache on rpm-based linux systems).  
   
-  c. deploy the boot.php file in the web/ folder to for example /var/www/html/harvester/ (for apache on rpm-based linux systems).  
+  d. Modify the `boot.php` script file to ensure the path and ips are correct in the boot() and install() functions.
+  NOTE: you can also modify boot.php for the install() section to include an automated install yaml file. 
   
-  d. modify the boot.php script to ensure the path and ips are correct in the boot() and install() functions.
+  f. Modify the `launch.sh` script to update the variables for cloud resources (compartment, subnet, image, ssh key, etc). 
   
-  e. modify the boot.php script to ensure correct db information. 
+  g. Modify the `hsimple.ipxe` ipxe script to ensure the path and ip is correct for the web server and location of `boot.php`. 
   
-  f. you can also modify boot.php for the install() section to include an automated install yaml file. 
+  h. Configure MySQL db server, create a blank database and load the `harvester.mysql` file in the `db/` folder into it. 
   
-  g. modify the launch.sh script to update the variables for cloud resources (compartment, subnet, image, ssh key, etc). 
-  
-  h. modify the hsimple.cfg ipxe script to ensure the path and ip is correct for the web server and location of boot.php. 
-  
-  i. Configure MySQL db server, create a blank database and load the harvester.mysql file in the db/ folder into it. 
-  
-    i. this creates a single table named nodes with 3 columns: id (auto incremented), ip (ip address of connecting booting host), and install (run install()? 1 = true, 0 = false, run boot())
+    i. This creates a single table named `nodes` with 3 columns: `id` (auto incremented), `ip` (ip address of connecting booting host), and install (run install()? 1 = true, 0 = false, run boot())
+    
+    ii. Modify the `boot.php` script to ensure correct db information.
   
 ### 3. Ensure you have quota in your tenancy for the DenseIO BM Shape you want to use. 
 
 ### 4. Launch an instance using the launch script: `./launch.sh hsimple.ipxe`
-
-NOTE: In OCI, the same ipxe script used to launch an instance is ran each boot. 
+NOTE: In OCI, the same ipxe script used to launch an instance executes each boot. 
 
 ### 5. Boot sequence:
 
-  a. first boot: 
+  a. First boot: 
 
-    i. when invokved via launch.sh - a bare metal dense i/o host will boot and run the hsimple.cfg ipxe script - which will redirect it to the webserver hosted boot.php to fetch and execute more ipxe code. 
+    i. When invokved via `launch.sh` - a bare metal dense i/o host will boot and run the `hsimple.ipxe` ipxe script - which will redirect it to the webserver hosted `boot.php` to fetch and execute more ipxe code. 
 
-    ii. for a new instance, boot.php will create a new record in the mysql database, and it will instruct the new host to boot to harvester installer the code is in boot.php's install() function.   
+    ii. For a new instance, `boot.php` will create a new record in the mysql database, and it will instruct the new host to boot to harvester installer the code is in boot.php's `install()` function.   
 
-    iii. the launch script also creates a console connection. use this to view the local console of the booting host. 
+    iii. The launch script also creates a console connection. Use this to view the local console of the booting host. 
 
-    iv. via local console: install harvester to the 1st listed NVME disk. 
+    iv. Via local console: Install harvester to the 1st listed NVME disk. 
 
-    v. after installation, the harvester installer will reboot. 
+    v. After installation, the harvester installer will reboot. 
 
-  b. second and subsequent boots:
+  b. Second and subsequent boots:
 
-    i. boot.php will find an existing record in the mysql database for this host and use the boot() function to boot from the NVME disk where harvester was installed on first boot. 
+    i. `boot.php` will find an existing record in the mysql database for this host and use the `boot()` function to boot from the NVME disk where Harvester was installed on first boot. 
 
-    ii. if you want to force a reinstall, update the database record for your host with an install flag of 1. 1=install 0=boot. 
+    ii. If you want to force a reinstall, update the database record for your host with an install flag of 1. 1=install 0=boot. 
 
 
