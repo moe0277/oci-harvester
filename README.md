@@ -14,7 +14,7 @@ The high level pattern for installing Harvester on OCI is:
   
   b. For eg if the subnet cidr is 10.0.10.0/24 - configure the security list to allow all traffic/ports for 10.0.10.0/24. 
   
-3. Deploy a small (Oracle Linux) server w/ 1 OCPU and 4 GB RAM, default disk size. 
+2. Deploy a small (Oracle Linux) server w/ 1 OCPU and 4 GB RAM, default disk size. 
 
   a. install oci-cli, apache, mysql, and php on this server because it will be hosting Harvester files. 
   
@@ -36,21 +36,30 @@ The high level pattern for installing Harvester on OCI is:
   
     i. this creates a single table named nodes with 3 columns: id (auto incremented), ip (ip address of connecting booting host), and install (run install()? 1 = true, 0 = false, run boot())
   
+3. Ensure you have quota in your tenancy for the DenseIO BM Shape you want to use. 
 
+4. Launch an instance using the launch script: ./launch.sh hsimple.cfg
 
-4. Ensure you have quota in your tenancy for the DenseIO BM Shape you want to use. 
-
-5. Launch an instance using the launch script: ./launch.sh hsimple.cfg
 NOTE: In OCI, the same ipxe script used to launch an instance is ran each boot. 
 
-6. Boot sequence:
-  a. first boot: 
-    i. when invokved via launch.sh - a bare metal dense i/o host will boot and run the hsimple.cfg ipxe script - which will redirect it to the webserver hosted boot.php to fetch and execute more ipxe code. 
-    ii. for a new instance, boot.php will create a new record in the mysql database, and it will instruct the new host to boot to harvester installer the code is in boot.php's install() function.   
-    iii. the launch script also creates a console connection. use this to view the local console of the booting host. 
-    iii. via local console: install harvester to the 1st listed NVME disk. 
-    iv. after installation, the harvester installer will reboot. 
-  b. second and subsequent boots:
-    i. boot.php will find an existing record in the mysql database for this host and use the boot() function to boot from the NVME disk where harvester was installed on first boot. 
-    ii. if you want to force a reinstall, update the database record for your host with an install flag of 1. 1=install 0=boot. 
-    
+5. Boot sequence:
+
+a. first boot: 
+
+i. when invokved via launch.sh - a bare metal dense i/o host will boot and run the hsimple.cfg ipxe script - which will redirect it to the webserver hosted boot.php to fetch and execute more ipxe code. 
+
+ii. for a new instance, boot.php will create a new record in the mysql database, and it will instruct the new host to boot to harvester installer the code is in boot.php's install() function.   
+
+iii. the launch script also creates a console connection. use this to view the local console of the booting host. 
+
+iii. via local console: install harvester to the 1st listed NVME disk. 
+
+iv. after installation, the harvester installer will reboot. 
+
+b. second and subsequent boots:
+
+i. boot.php will find an existing record in the mysql database for this host and use the boot() function to boot from the NVME disk where harvester was installed on first boot. 
+
+ii. if you want to force a reinstall, update the database record for your host with an install flag of 1. 1=install 0=boot. 
+
+
