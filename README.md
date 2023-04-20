@@ -6,7 +6,7 @@ NOTE: Tested with Harvester v1.1.2-rc7
 OCI allows you to run bare-metal servers. 
 Harvester can be deployed on bare-metal servers in OCI. 
 There are two types of bare-metal servers in OCI: standard and dense i/o. 
-So far, we have been able to deploy to dense i/o server - because they provide local disks where Harvester can be installed. 
+So far, we have been able to deploy to dense i/o servers - because they provide local disks where Harvester can be installed. We have not been able to install Harvester to a diskless system where the boot volume is an iSCSI lun delivered over the network - this is required for OCI bare-metal hosts without dense i/o. 
 
 The high level pattern for installing Harvester on OCI is:
 1. Deploy a VCN and at least 1 subnet in OCI.  
