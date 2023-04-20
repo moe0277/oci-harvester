@@ -8,11 +8,14 @@ So far, we have been able to deploy to dense i/o servers - because they provide 
 We have not been able to install Harvester to a diskless system where the boot volume is an iSCSI lun delivered over the network - this is required for OCI bare-metal hosts without dense i/o. 
 
 The high level pattern for installing Harvester on OCI is:
-1. Deploy a VCN and at least 1 subnet in OCI.  
+1. Deploy a VCN and at least 1 subnet in OCI. 
+
   a. Ensure the subnet's security list allows traffic on all ports within the subnet. 
+  
   b. For eg if the subnet cidr is 10.0.10.0/24 - configure the security list to allow all traffic/ports for 10.0.10.0/24. 
   
 3. Deploy a small (Oracle Linux) server w/ 1 OCPU and 4 GB RAM, default disk size. 
+
   a. install oci-cli, apache, mysql, and php on this server because it will be hosting Harvester files. 
   
   b. ensure apache can execute php scripts. 
