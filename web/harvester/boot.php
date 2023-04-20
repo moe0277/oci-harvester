@@ -44,7 +44,7 @@ try {
 echo "# Node IP: $clientip\n";
 echo "#\n";
 
-$mysqli = new mysqli('localhost', "root", "I love 0racle!", "harvester");
+$mysqli = new mysqli('localhost', "root", "SOMEPASSWORD", "harvester");
 $result = $mysqli->query("SELECT * from nodes where ip='$clientip'");
 if ($result->num_rows > 0) {
 	while($row = $result->fetch_assoc()) { 
