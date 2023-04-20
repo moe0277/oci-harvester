@@ -39,7 +39,7 @@ The high level pattern for installing Harvester on OCI is:
   
 ### 3. Ensure you have quota in your tenancy for the DenseIO BM Shape you want to use. 
 
-### 4. Launch an instance using the launch script: ./launch.sh hsimple.cfg
+### 4. Launch an instance using the launch script: `./launch.sh hsimple.ipxe`
 
 NOTE: In OCI, the same ipxe script used to launch an instance is ran each boot. 
 
